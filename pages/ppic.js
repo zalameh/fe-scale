@@ -5,7 +5,7 @@ export default function Page() {
     <>
       <header className='text-slate-700 text-sm md:text-base'>
         <div className='flex flex-row-reverse py-4 px-6'>
-          <button className='hover:text-slate-500 active:text-slate-400'>sign out</button>
+          {/* <button className='hover:text-slate-500 active:text-slate-400'>sign out</button> */}
         </div>
       </header>
 
