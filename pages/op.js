@@ -1,4 +1,4 @@
-import { useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { useForm } from "react-hook-form";
 
 export default function Page() {
@@ -9,6 +9,7 @@ export default function Page() {
     register,
     handleSubmit,
     watch,
+    setValue,
     formState: { errors },
   } = useForm();
 
@@ -21,6 +22,16 @@ export default function Page() {
   const actual = useId();
   const temp = useId();
   const _date = useId();
+
+  useEffect(() => {
+    if (isSAPSelected && isMaterialSelected) {
+      setValue("batch", 2);
+      setValue("qty", 100);
+      setValue("location", "test");
+      setValue("bin", "test");
+      setValue("temp", 30);
+    }
+  }, [isSAPSelected, isMaterialSelected]);
 
   return (
     <>
@@ -191,6 +202,7 @@ export default function Page() {
               </label>
               <input
                 id={temp}
+                type='number'
                 disabled
                 {...register("temp")}
                 className='block min-w-full p-2 md:px-4 rounded-md md:rounded-lg focus:outline-none focus:ring focus:ring-slate-300 border-2 border-slate-200 shadow-sm'
