@@ -1,6 +1,8 @@
 import { useId } from "react";
 import { useForm } from "react-hook-form";
 
+const URL = process.env.NEXT_PUBLIC_NODE_RED_BACK_END_URL;
+
 export default function Form() {
   const {
     register,
@@ -10,6 +12,7 @@ export default function Form() {
   } = useForm();
 
   const sap = useId();
+  const product = useId();
   const material = useId();
   const batch = useId();
   const location = useId();
@@ -18,8 +21,22 @@ export default function Form() {
   const temp = useId();
   const _date = useId();
 
-  const onSubmit = payload => {
+  const onSubmit = async payload => {
+    let d;
     console.log(payload);
+
+    try {
+      const res = await fetch(URL + "schedule", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
+      d = await res.json();
+
+      console.log(d);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -33,7 +50,8 @@ export default function Form() {
         </label>
         <input
           id={sap}
-          {...register("sap", { required: true })}
+          type='number'
+          {...register("sap", { required: true, valueAsNumber: true })}
           className='block min-w-full p-2 md:px-4 rounded-md md:rounded-lg focus:outline-none focus:ring focus:ring-slate-300 border-2 border-slate-200 shadow-sm appearance-none'
         />
         {errors.sap?.type === "required" && (
@@ -50,7 +68,7 @@ export default function Form() {
         <input
           id={batch}
           type='number'
-          {...register("batch")}
+          {...register("batch", { required: true, valueAsNumber: true })}
           className='block min-w-full p-2 md:px-4 rounded-md md:rounded-lg focus:outline-none focus:ring focus:ring-slate-300 border-2 border-slate-200 shadow-sm'
         />
       </div>
@@ -62,7 +80,7 @@ export default function Form() {
         <input
           id={material}
           type='number'
-          {...register("material")}
+          {...register("material", { valueAsNumber: true })}
           className='block min-w-full p-2 md:px-4 rounded-md md:rounded-lg focus:outline-none focus:ring focus:ring-slate-300 border-2 border-slate-200 shadow-sm'
         />
       </div>
@@ -73,7 +91,8 @@ export default function Form() {
         </label>
         <input
           id={qty}
-          {...register("qty")}
+          type='number'
+          {...register("qty", { valueAsNumber: true })}
           className='block min-w-full p-2 md:px-4 rounded-md md:rounded-lg focus:outline-none focus:ring focus:ring-slate-300 border-2 border-slate-200 shadow-sm'
         />
       </div>
@@ -118,7 +137,8 @@ export default function Form() {
         </label>
         <input
           id={temp}
-          {...register("temp")}
+          type='number'
+          {...register("temp", { valueAsNumber: true })}
           className='block min-w-full p-2 md:px-4 rounded-md md:rounded-lg focus:outline-none focus:ring focus:ring-slate-300 border-2 border-slate-200 shadow-sm'
         />
       </div>

@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 export default function Page() {
   const [isSAPSelected, setIsSAPSelected] = useState(false);
   const [isMaterialSelected, setIsMaterialSelected] = useState(false);
+  const [listSap, setListSap] = useState([]);
 
   const {
     register,
@@ -32,6 +33,15 @@ export default function Page() {
       setValue("temp", 30);
     }
   }, [isSAPSelected, isMaterialSelected]);
+
+  useEffect(() => {
+    fetch("http://localhost:1882/sap")
+      .then(res => res.json())
+      .then(res => {
+        setListSap(res);
+        console.log(res);
+      });
+  }, []);
 
   return (
     <>
@@ -66,9 +76,12 @@ export default function Page() {
                   {" "}
                   -- Select an Option --{" "}
                 </option>
-                <option value='1'>2938491</option>
-                <option value='1'>2345</option>
-                <option value='1'>897234</option>
+                {listSap.length !== 0 &&
+                  listSap.map((l, i) => (
+                    <option key={i} value={l}>
+                      {l}
+                    </option>
+                  ))}
               </select>
             </div>
 
