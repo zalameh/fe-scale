@@ -1,6 +1,7 @@
+// import { useState } from "react";
 import { useForm } from "react-hook-form";
 
-const URL = process.env.NEXT_PUBLIC_NODE_RED_BACK_END_URL;
+const URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 export default function Form() {
   const {
@@ -10,8 +11,63 @@ export default function Form() {
     formState: { errors },
   } = useForm();
 
-  const onSubmit = payload => {
-    console.log(payload);
+  // const [sap, setSAP] = useState(null);
+  // const [product, setProduct] = useState(null);
+  // const [material, setMaterial] = useState(null);
+
+  const onSubmit = async payload => {
+    let sap, product, material;
+
+    try {
+      const response = await fetch(URL + "/sap", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          no: payload.sapOrderNo,
+        }),
+      });
+      const responseJson = await response.json();
+      sap = responseJson.data;
+    } catch (e) {
+      console.error(e.message);
+    }
+
+    try {
+      const response = await fetch(URL + "/product", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          no: payload.productNo,
+          sapId: sap._id,
+        }),
+      });
+      const responseJson = await response.json();
+      product = responseJson.data;
+    } catch (e) {
+      console.error(e.message);
+    }
+
+    try {
+      const response = await fetch(URL + "/material", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          no: payload.materialNo,
+          productId: product._id,
+          quantity: payload.quantity,
+        }),
+      });
+      const responseJson = await response.json();
+      material = responseJson.data;
+    } catch (e) {
+      console.error(e.message);
+    }
   };
 
   return (

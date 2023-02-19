@@ -1,10 +1,18 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 
+const URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function Form() {
-  const [weight, setWeight] = useState(0);
   const [materialTime, setMaterialTime] = useState(0);
   const [running, setRunning] = useState(false);
+  const [sapList, setSAPList] = useState([]);
+  const [productList, setProductList] = useState([]);
+  const [materialList, setMaterialList] = useState([]);
+  const [SAP, setSAP] = useState(null);
+  const [sapId, setSAPId] = useState("");
+  const [product, setProduct] = useState(null);
+  const [material, setMaterial] = useState(null);
 
   useEffect(() => {
     let interval;
@@ -18,15 +26,8 @@ export default function Form() {
     return () => clearInterval(interval);
   }, [running]);
 
-  const getWeight = async () => {
+  const getWeight = () => {
     let payload;
-    try {
-      const response = await fetch(URL + "/weight");
-      payload = await response.json();
-    } catch (error) {
-      console.error(error);
-    }
-    setWeight(payload.payload);
   };
 
   const {
@@ -40,8 +41,36 @@ export default function Form() {
     console.log(payload);
   };
 
+  const startTime = async () => {
+    let somethin;
+  };
+
+  useEffect(() => {
+    fetch(URL + "/sap")
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        console.log(res);
+        setSAPList(res.data);
+      });
+  }, []);
+
+  // useEffect(() => {
+  //   if (SAP) {
+  //     fetch(URL + "/product?sapId=" + SAP._id)
+  //       .then(res => {
+  //         return res.json();
+  //       })
+  //       .then(res => {
+  //         setProductList(res.data);
+  //       });
+  //     console.log("ada sap");
+  //   }
+  // }, [SAP]);
+
   return (
-    <div className='flex gap-16'>
+    <div className='flex w-full gap-16'>
       <form
         onSubmit={handleSubmit(onSubmit)}
         className='flex flex-col w-full gap-6'
@@ -51,23 +80,50 @@ export default function Form() {
           <select
             defaultValue={""}
             className='w-full py-2 px-4'
-            {...register("sapOrderNo", { required: true })}
+            {...register("sapOrderNo", {
+              required: true,
+              onChange: e => {
+                const id = e.target.value;
+                console.log(id);
+                // setSAPId(id);
+              },
+            })}
           >
             <option disabled value=''>
               {" "}
               -- Select an Option --{" "}
             </option>
-            <option value='onta'>onta</option>
+            {sapList.length !== 0 &&
+              sapList.map((each, index) => (
+                <option key={each._id} value={each._id}>
+                  {each.no}
+                </option>
+              ))}
           </select>
         </div>
 
         <div>
           <label>Product No.</label>
-          <input
+          <select
             type='number'
+            defaultValue={""}
             className='w-full py-2 px-4'
-            {...register("productNo", { required: true, disabled: true })}
-          />
+            {...register("productNo", {
+              required: true,
+              disabled: !SAP,
+            })}
+          >
+            <option disabled value=''>
+              {" "}
+              -- Select an Option --{" "}
+            </option>
+            {productList.length !== 0 &&
+              productList.map((each, index) => (
+                <option key={each._id} value={each}>
+                  {each.no}
+                </option>
+              ))}
+          </select>
         </div>
 
         <div>
@@ -122,28 +178,41 @@ export default function Form() {
         <button className='p-2 bg-slate-900 text-slate-50'>submit</button>
       </form>
 
-      <div className='w-2/3'>
-        <div className='bg-slate-200'>
-          <div className='numbers'>
-            <span>
-              {("0" + Math.floor((materialTime / 60000) % 60)).slice(-2)}:
-            </span>
-            <span>
-              {("0" + Math.floor((materialTime / 1000) % 60)).slice(-2)}:
-            </span>
-            <span>{("0" + ((materialTime / 10) % 100)).slice(-2)}</span>
-          </div>
-
-          <div className='buttons'>
-            <button onClick={() => setRunning(true)}>Start</button>
-            <button
-              onClick={() => {
-                setRunning(false);
-                setMaterialTime(0);
-              }}
-            >
-              Stop
-            </button>
+      <div className='w-3/5 flex flex-col'>
+        <div className='bg-slate-200 p-3'>
+          <div className='text-center'>Material Timer</div>
+          <div>
+            <div className=''>
+              <span>
+                {("0" + Math.floor((materialTime / 60000) % 60)).slice(-2)}:
+              </span>
+              <span>
+                {("0" + Math.floor((materialTime / 1000) % 60)).slice(-2)}:
+              </span>
+              <span>{("0" + ((materialTime / 10) % 100)).slice(-2)}</span>
+            </div>
+            <div className=''>
+              {!running ? (
+                <button
+                  className={`${
+                    !SAP || !product || (!material && "cursor-pointer")
+                  }`}
+                  disabled={!SAP || !product || !material}
+                  onClick={() => setRunning(true)}
+                >
+                  Start
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setRunning(false);
+                    setMaterialTime(0);
+                  }}
+                >
+                  Stop
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
