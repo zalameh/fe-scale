@@ -13,6 +13,7 @@ export default function Form() {
   const [sapId, setSAPId] = useState("");
   const [product, setProduct] = useState(null);
   const [material, setMaterial] = useState(null);
+  const [isSAPSelected, setIsSAPSelected] = useState(false);
 
   useEffect(() => {
     let interval;
@@ -45,6 +46,12 @@ export default function Form() {
     let somethin;
   };
 
+  // useEffect(() => {
+  //   const sapOrderNo = watch("sapOrderNo");
+  //   console.log(sapOrderNo);
+  //   // setSAP(sapOrderNo);
+  // }, [watch]);
+
   useEffect(() => {
     fetch(URL + "/sap")
       .then(res => {
@@ -56,18 +63,18 @@ export default function Form() {
       });
   }, []);
 
-  // useEffect(() => {
-  //   if (SAP) {
-  //     fetch(URL + "/product?sapId=" + SAP._id)
-  //       .then(res => {
-  //         return res.json();
-  //       })
-  //       .then(res => {
-  //         setProductList(res.data);
-  //       });
-  //     console.log("ada sap");
-  //   }
-  // }, [SAP]);
+  useEffect(() => {
+    if (SAP) {
+      fetch(URL + "/product?sapId=" + watch("sapOrderNo"))
+        .then(res => {
+          return res.json();
+        })
+        .then(res => {
+          setProductList(res.data);
+        });
+      console.log("ada sap");
+    }
+  }, [watch("sapOrderNo")]);
 
   return (
     <div className='flex w-full gap-16'>
@@ -78,15 +85,15 @@ export default function Form() {
         <div>
           <label>SAP Order No.</label>
           <select
-            defaultValue={""}
+            // defaultValue={""}
             className='w-full py-2 px-4'
             {...register("sapOrderNo", {
               required: true,
-              onChange: e => {
-                const id = e.target.value;
-                console.log(id);
-                // setSAPId(id);
-              },
+              // onChange: e => {
+              //   const id = e.target.value;
+              //   console.log(id);
+              //   setIsSAPSelected(id);
+              // },
             })}
           >
             <option disabled value=''>
@@ -197,7 +204,7 @@ export default function Form() {
                   className={`${
                     !SAP || !product || (!material && "cursor-pointer")
                   }`}
-                  disabled={!SAP || !product || !material}
+                  // disabled={!SAP || !product || !material}
                   onClick={() => setRunning(true)}
                 >
                   Start

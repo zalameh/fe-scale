@@ -1,7 +1,12 @@
+import Link from "next/link";
+
 export default function Home() {
   return (
     <>
-      <div>test</div>
+      <Link href='/'>Home</Link>
+      <br />
+
+      <Link href='/ppic'>ppic</Link>
     </>
   );
 }

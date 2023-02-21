@@ -76,15 +76,6 @@ export default function Form() {
       className='flex flex-col gap-6 w-4/5 md:w-2/3 mx-auto'
     >
       <div>
-        <label>SAP Order No.</label>
-        <input
-          type='number'
-          className='w-full py-2 px-4'
-          {...register("sapOrderNo", { required: true })}
-        />
-      </div>
-
-      <div>
         <label>Product No.</label>
         <input
           type='number'
@@ -99,15 +90,6 @@ export default function Form() {
           type='number'
           className='w-full py-2 px-4'
           {...register("materialNo", { required: true })}
-        />
-      </div>
-
-      <div>
-        <label>Quantity</label>
-        <input
-          type='number'
-          className='w-full py-2 px-4'
-          {...register("quantity", { valueAsNumber: true })}
         />
       </div>
 
