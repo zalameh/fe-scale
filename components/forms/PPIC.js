@@ -36,6 +36,7 @@ export default function Form() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          "Cache-Control": "max-age=604800",
         },
         body: JSON.stringify({
           no: materialNo,

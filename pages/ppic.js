@@ -1,6 +1,8 @@
 import Form from "@/components/forms/PPIC";
 import CSVForm from "@/components/forms/PPICcsv";
 
+const URL = process.env.NEXT_PUBLIC_API_BASE_URL;
+
 export default function Page() {
   return (
     <>
@@ -21,6 +23,21 @@ export default function Page() {
 
             <CSVForm />
           </div>
+
+          {/* TEST CACHE */}
+          <button
+            onClick={() => {
+              fetch(URL + "/product", {
+                headers: {
+                  "Cache-Control": "max-age=3600",
+                },
+              })
+                .then(res => res.json())
+                .then(res => console.log(res));
+            }}
+          >
+            get
+          </button>
         </div>
       </main>
     </>
