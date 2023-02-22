@@ -6,14 +6,19 @@ const URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 export default function Form() {
   const [materialTime, setMaterialTime] = useState(0);
   const [running, setRunning] = useState(false);
-  const [sapList, setSAPList] = useState([]);
   const [productList, setProductList] = useState([]);
-  const [materialList, setMaterialList] = useState([]);
-  const [SAP, setSAP] = useState(null);
-  const [sapId, setSAPId] = useState("");
   const [product, setProduct] = useState(null);
-  const [material, setMaterial] = useState(null);
-  const [isSAPSelected, setIsSAPSelected] = useState(false);
+  const [materialList, setMaterialList] = useState([]);
+  const [operationState, setOperationState] = useState(false);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm();
 
   useEffect(() => {
     let interval;
@@ -28,118 +33,90 @@ export default function Form() {
   }, [running]);
 
   const getWeight = () => {
-    let payload;
+    const min = 1;
+    const max = 100;
+    const randomNum = Math.floor(Math.random() * (max - min + 1) + min);
+    setValue("actualQuantity", randomNum);
   };
 
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
+  useEffect(() => {
+    reset({
+      material: "",
+    });
+  }, [product]);
+
+  useEffect(() => {
+    fetch(URL + "/product")
+      .then(res => {
+        return res.json();
+      })
+      .then(res => {
+        setProductList(res.data);
+      });
+  }, []);
 
   const onSubmit = payload => {
     console.log(payload);
   };
 
-  const startTime = async () => {
-    let somethin;
-  };
-
-  // useEffect(() => {
-  //   const sapOrderNo = watch("sapOrderNo");
-  //   console.log(sapOrderNo);
-  //   // setSAP(sapOrderNo);
-  // }, [watch]);
-
-  useEffect(() => {
-    fetch(URL + "/sap")
-      .then(res => {
-        return res.json();
-      })
+  const handleProductNoChange = e => {
+    const productId = e.target.value;
+    fetch(`${URL}/material?productId=${productId}`)
+      .then(res => res.json())
       .then(res => {
         console.log(res);
-        setSAPList(res.data);
+        setProduct(productId);
+        setMaterialList(res.data);
       });
-  }, []);
-
-  useEffect(() => {
-    if (SAP) {
-      fetch(URL + "/product?sapId=" + watch("sapOrderNo"))
-        .then(res => {
-          return res.json();
-        })
-        .then(res => {
-          setProductList(res.data);
-        });
-      console.log("ada sap");
-    }
-  }, [watch("sapOrderNo")]);
+  };
 
   return (
     <div className='flex w-full gap-16'>
       <form
+        className='flex w-full flex-col gap-10'
         onSubmit={handleSubmit(onSubmit)}
-        className='flex flex-col w-full gap-6'
       >
         <div>
           <label>SAP Order No.</label>
-          <select
-            // defaultValue={""}
+          <input
+            {...register("sapOrderNo", { disabled: running })}
             className='w-full py-2 px-4'
-            {...register("sapOrderNo", {
-              required: true,
-              // onChange: e => {
-              //   const id = e.target.value;
-              //   console.log(id);
-              //   setIsSAPSelected(id);
-              // },
-            })}
-          >
-            <option disabled value=''>
-              {" "}
-              -- Select an Option --{" "}
-            </option>
-            {sapList.length !== 0 &&
-              sapList.map((each, index) => (
-                <option key={each._id} value={each._id}>
-                  {each.no}
-                </option>
-              ))}
-          </select>
+            type='number'
+          />
         </div>
 
         <div>
           <label>Product No.</label>
           <select
-            type='number'
             defaultValue={""}
             className='w-full py-2 px-4'
-            {...register("productNo", {
-              required: true,
-              disabled: !SAP,
-            })}
+            {...register("productNo", { required: true, disabled: running })}
+            onChange={handleProductNoChange}
           >
             <option disabled value=''>
               {" "}
               -- Select an Option --{" "}
             </option>
-            {productList.length !== 0 &&
-              productList.map((each, index) => (
-                <option key={each._id} value={each}>
-                  {each.no}
-                </option>
-              ))}
+            {productList.map(option => (
+              <option key={option._id} value={option._id}>
+                {option.no}
+              </option>
+            ))}
           </select>
         </div>
 
         <div>
           <label>Material No.</label>
-          <input
-            type='number'
+          <select
             className='w-full py-2 px-4'
-            {...register("materialNo", { required: true, disabled: true })}
-          />
+            {...register("materialNo", { required: true, disabled: running })}
+          >
+            {materialList.map(option => (
+              <option key={option._id} value={option._id}>
+                {option.no}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>
@@ -147,7 +124,10 @@ export default function Form() {
           <input
             type='number'
             className='w-full py-2 px-4'
-            {...register("quantity", { valueAsNumber: true, disabled: true })}
+            {...register("quantity", {
+              valueAsNumber: true,
+              disabled: running,
+            })}
           />
         </div>
 
@@ -157,13 +137,15 @@ export default function Form() {
             <select
               defaultValue={""}
               className='py-2 px-4'
-              {...register("sapOrderNo", { required: true })}
+              {...register("test")}
             >
               <option disabled value=''>
                 {" "}
                 -- Select an Option --{" "}
               </option>
-              <option value='onta'>onta</option>
+              <option value='2 ton'>2 ton</option>
+              <option value='350 kg'>350 kg</option>
+              <option value='2 kg'>2 kg</option>
             </select>
             <input
               type='number'
@@ -176,13 +158,20 @@ export default function Form() {
             <button
               className='p-2 text-slate-50 bg-slate-900'
               onClick={getWeight}
+              type='button'
             >
               get weight
             </button>
           </div>
         </div>
 
-        <button className='p-2 bg-slate-900 text-slate-50'>submit</button>
+        <button
+          className='bg-slate-900 text-slate-50 p-2'
+          type='submit'
+          // disabled={!product}
+        >
+          Submit
+        </button>
       </form>
 
       <div className='w-3/5 flex flex-col'>
@@ -201,9 +190,9 @@ export default function Form() {
             <div className=''>
               {!running ? (
                 <button
-                  className={`${
-                    !SAP || !product || (!material && "cursor-pointer")
-                  }`}
+                  // className={`${
+                  //   !SAP || !product || (!material && "cursor-pointer")
+                  // }`}
                   // disabled={!SAP || !product || !material}
                   onClick={() => setRunning(true)}
                 >

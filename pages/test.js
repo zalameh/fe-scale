@@ -7,6 +7,7 @@ export default function Form() {
   const { register, handleSubmit, setValue } = useForm();
   const [productList, setProductList] = useState([]);
   const [sapList, setSAPList] = useState([]);
+  const [materialList, setMaterialList] = useState([]);
 
   useEffect(() => {
     fetch(URL + "/sap")
@@ -33,27 +34,64 @@ export default function Form() {
       });
   };
 
+  const handleProductNoChange = e => {
+    const productId = e.target.value;
+    fetch(`${URL}/material?productId=${productId}`)
+      .then(res => res.json())
+      .then(res => {
+        console.log(res);
+        setMaterialList(res.data);
+      });
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <select
-        {...register("sapOrderNo", { required: true })}
-        onChange={handleSapOrderNoChange}
-      >
-        {sapList.length !== 0 &&
-          sapList.map((each, index) => (
-            <option key={each._id} value={each._id}>
-              {each.no}
-            </option>
-          ))}
-      </select>
-      <select {...register("product", { required: true })}>
-        {productList.map(option => (
-          <option key={option._id} value={option._id}>
-            {option.no}
-          </option>
-        ))}
-      </select>
-      <button type='submit'>search</button>
-    </form>
+    <div className='container mx-auto'>
+      <div className='pt-20'>
+        <form
+          className='flex flex-col gap-10'
+          onSubmit={handleSubmit(onSubmit)}
+        >
+          <input className='p-4 text-xl' type='number' />
+
+          <select
+            className='p-4 text-xl'
+            {...register("sapOrderNo", { required: true })}
+            onChange={handleSapOrderNoChange}
+          >
+            {sapList.length !== 0 &&
+              sapList.map((each, index) => (
+                <option key={each._id} value={each._id}>
+                  {each.no}
+                </option>
+              ))}
+          </select>
+
+          <select
+            className='p-4 text-xl'
+            {...register("product", { required: true })}
+            onChange={handleProductNoChange}
+          >
+            {productList.map(option => (
+              <option key={option._id} value={option._id}>
+                {option.no}
+              </option>
+            ))}
+          </select>
+
+          <select
+            className='p-4 text-xl'
+            {...register("material", { required: true })}
+          >
+            {materialList.map(option => (
+              <option key={option._id} value={option._id}>
+                {option.no}
+              </option>
+            ))}
+          </select>
+
+          <button type='submit'>search</button>
+        </form>
+      </div>
+    </div>
   );
 }

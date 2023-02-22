@@ -33,6 +33,14 @@ export default function Page({ example, d }) {
 	let materialDuration;
 	let productDuration;
 
+	const materialCreatedAt = new Date(d.material.createdAt);
+	const date = materialCreatedAt.toLocaleDateString("en-UK", {
+		weekday: "long",
+		year: "numeric",
+		month: "long",
+		day: "numeric",
+	});
+
 	if (d.material.endTime) {
 		const end = d.material.endTime;
 		const start = d.material.startTime;
@@ -59,9 +67,12 @@ export default function Page({ example, d }) {
 
 	return (
 		<>
-			{example}
 			<main>
 				<div className='container mx-auto flex flex-col gap-6 pt-14'>
+					<div className='flex justify-between bg-slate-200 py-4 px-12 rounded-lg'>
+						<div>Date</div>
+						<div>{date}</div>
+					</div>
 					<div className='flex justify-between bg-slate-200 py-4 px-12 rounded-lg'>
 						<div>SAP Order No.: </div>
 						<div>{d.sap.no}</div>

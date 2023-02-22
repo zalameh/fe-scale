@@ -1,4 +1,5 @@
 import Form from "@/components/forms/PPIC";
+import CSVForm from "@/components/forms/PPICcsv";
 
 export default function Page() {
   return (
@@ -10,8 +11,16 @@ export default function Page() {
       </header>
 
       <main className='h-screen'>
-        <div className='container mx-auto pt-16 bg-slate-100 h-full'>
+        <div className='container flex flex-col gap-20 mx-auto pt-16 bg-slate-100 h-full'>
           <Form />
+
+          <hr style={{ borderWidth: "2px" }} />
+
+          <div className='flex flex-col gap-10 w-4/5 md:w-2/3 mx-auto'>
+            <div className='text-xl text-center'>Input CSV File</div>
+
+            <CSVForm />
+          </div>
         </div>
       </main>
     </>

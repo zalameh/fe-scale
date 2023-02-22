@@ -11,28 +11,9 @@ export default function Form() {
     formState: { errors },
   } = useForm();
 
-  // const [sap, setSAP] = useState(null);
-  // const [product, setProduct] = useState(null);
-  // const [material, setMaterial] = useState(null);
-
   const onSubmit = async payload => {
-    let sap, product, material;
-
-    try {
-      const response = await fetch(URL + "/sap", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          no: payload.sapOrderNo,
-        }),
-      });
-      const responseJson = await response.json();
-      sap = responseJson.data;
-    } catch (e) {
-      console.error(e.message);
-    }
+    const { productNo, materialNo } = payload;
+    let product, material;
 
     try {
       const response = await fetch(URL + "/product", {
@@ -41,8 +22,7 @@ export default function Form() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          no: payload.productNo,
-          sapId: sap._id,
+          no: productNo,
         }),
       });
       const responseJson = await response.json();
@@ -58,9 +38,8 @@ export default function Form() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          no: payload.materialNo,
+          no: materialNo,
           productId: product._id,
-          quantity: payload.quantity,
         }),
       });
       const responseJson = await response.json();
