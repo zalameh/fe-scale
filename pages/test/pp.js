@@ -12,7 +12,7 @@ export default function Page() {
     formState: { isSubmitSuccessful },
   } = useForm();
 
-  const onSubmit = async payload => {
+  const onSubmit = async (payload) => {
     console.log("payload :\n", payload);
 
     let data;
@@ -36,63 +36,46 @@ export default function Page() {
   }, [formState]);
 
   return (
-    <form
-      onSubmit={handleSubmit(onSubmit)}
-      className='mx-auto max-w-xl text-lg mt-20 flex flex-col gap-4'
-    >
-      <input
-        type='number'
-        className='p-2'
-        {...register("sapOrderNo", { required: true })}
-        placeholder='SAP Order No.'
-      />
-      <input
-        type='number'
-        className='p-2'
-        {...register("productNo", { required: true })}
-        placeholder='Product No.'
-      />
-      <input
-        type='number'
-        className='p-2'
-        {...register("materialNo", { required: true })}
-        placeholder='Material No.'
-      />
-      <input
-        type='number'
-        step='0.1'
-        className='p-2'
-        {...register("quantity", { valueAsNumber: true })}
-        placeholder='Qty in Kg.'
-      />
-      <input
-        type='text'
-        className='p-2'
-        {...register("storageLoc")}
-        placeholder='Storage Location'
-      />
-      <input
-        type='text'
-        className='p-2'
-        {...register("storageBin")}
-        placeholder='Storage Bin'
-      />
-      <input
-        type='number'
-        step='0.1'
-        className='p-2'
-        {...register("correction", { valueAsNumber: true })}
-        placeholder='Correction'
-      />
-      <input
-        type='number'
-        step='0.1'
-        className='p-2'
-        {...register("temperature", { valueAsNumber: true })}
-        placeholder='Temperature in &deg;C'
-      />
-      <button>submit</button>
-    </form>
+    <div className='mx-auto container pt-20'>
+      <form
+        onSubmit={handleSubmit(onSubmit)}
+        className='text-lg flex flex-col gap-4'
+      >
+        <input
+          type='number'
+          className='p-2'
+          {...register("sapOrderNo", { required: true })}
+          placeholder='SAP Order No.'
+        />
+        <input
+          type='number'
+          className='p-2'
+          {...register("productNo", { required: true })}
+          placeholder='Product No.'
+        />
+        <input
+          type='number'
+          className='p-2'
+          {...register("materialNo", { required: true })}
+          placeholder='Material No.'
+        />
+        <input
+          type='number'
+          step='0.1'
+          className='p-2'
+          {...register("quantity", { valueAsNumber: true })}
+          placeholder='Qty in Kg.'
+        />
+        <input
+          type='number'
+          step='0.1'
+          className='p-2'
+          {...register("correction", { valueAsNumber: true })}
+          placeholder='Correction'
+        />
+        <button>submit</button>
+      </form>
+    </div>
   );
 }
 

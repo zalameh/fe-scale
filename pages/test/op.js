@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 
+import { Display as SegmentDisplay } from "react-7-segment-display";
+
 const URL = process.env.NEXT_PUBLIC_NODE_RED_BACK_END_URL;
 
 export default function Page() {
@@ -18,7 +20,7 @@ export default function Page() {
     formState: { isSubmitSuccessful },
   } = useForm();
 
-  const onSubmit = async payload => {
+  const onSubmit = async (payload) => {
     console.log("payload :\n", payload);
     let data;
     try {
@@ -47,7 +49,7 @@ export default function Page() {
     }
   };
 
-  const getProductNoList = async no => {
+  const getProductNoList = async (no) => {
     let data;
     try {
       const response = await fetch(URL + "/products-no?sapOrderNo=" + no, {
@@ -85,7 +87,7 @@ export default function Page() {
   useEffect(() => {
     if (formState.isSubmitSuccessful) {
       reset((data) => {
-        console.log(data)
+        console.log(data);
       });
     }
   }, [formState]);
@@ -99,17 +101,17 @@ export default function Page() {
   // }, [SAPOrderNoList]);
 
   return (
-    <>
+    <div className='flex container mx-auto pt-20 gap-10 justify-center'>
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className='mx-auto max-w-xl text-lg mt-20 flex flex-col gap-4 text-slate-800'
+        className='text-lg flex flex-col gap-4 text-slate-800'
       >
         <select
           defaultValue={""}
           className='p-2 bg-white cursor-pointer'
           {...register("sapOrderNo", {
             required: true,
-            onChange: e => {
+            onChange: (e) => {
               const value = e.target.value;
               getProductNoList(value);
             },
@@ -134,7 +136,7 @@ export default function Page() {
           className={`p-2 bg-white ${watch("sapOrderNo") && "cursor-pointer"}`}
           {...register("productNo", {
             required: true,
-            onChange: e => {
+            onChange: (e) => {
               let sap = getValues("sapOrderNo");
               let prod = e.target.value;
               console.log(sap, prod);
@@ -206,7 +208,7 @@ export default function Page() {
           type='number'
           step='0.1'
           className='p-2'
-          {...register("correction", { valueAsNumber: true, disabled: true  })}
+          {...register("correction", { valueAsNumber: true, disabled: true })}
           placeholder='Correction'
         />
         <input
@@ -216,16 +218,11 @@ export default function Page() {
           {...register("temperature", { valueAsNumber: true, disabled: true })}
           placeholder='Temperature in &deg;C'
         />
-        <input
-          type='number'
-          step='0.1'
-          className='p-4 border border-red-300 bg-slate-700 text-red-800'
-          {...register("actualQuantity", { valueAsNumber: true, disabled: true  })}
-          placeholder='Actual Qty in Kg.'
-        />
+
         <button>submit</button>
       </form>
-      {/* <button onClick={getSAP}>get sap</button> */}
-    </>
+
+      <SegmentDisplay value="77" count="3" backgroundColor='#000000de' skew='true' />
+    </div>
   );
 }
